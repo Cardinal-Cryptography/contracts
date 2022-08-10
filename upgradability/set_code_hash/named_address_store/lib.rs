@@ -22,7 +22,6 @@ mod named_address_store {
     }
 
     impl NamedAddressStore {
-
         /// Initializes empty address store
         #[ink(constructor)]
         pub fn new() -> Self {
@@ -38,7 +37,6 @@ mod named_address_store {
         /// Performs data migration from the old format
         #[ink(message)]
         pub fn migrate(&mut self) {
-
             // We only want to perform a migration if it has not happened already
             if self.storage.migration_performed {
                 return;
@@ -118,16 +116,16 @@ mod named_address_store {
             let mut bytes: [u8; 32]  = [0; 32];
 
             bytes[0] = 1;
-            let entry_1 = AccountId::from(bytes);
+            let address_1 = AccountId::from(bytes);
 
             bytes[0] = 4;
-            let entry_2 = AccountId::from(bytes);
+            let address_2 = AccountId::from(bytes);
 
-            address_store.add_new_address(entry_1, None);
-            address_store.add_new_address(entry_2, None);
-            address_store.add_new_address(entry_2, Some(String::from("aleph")));
-            assert!(address_store.storage.addresses.contains(&(entry_2, None)));
-            assert!(!address_store.storage.addresses.contains(&(entry_2, Some(String::from("aleph")))));
+            address_store.add_new_address(address_1, None);
+            address_store.add_new_address(address_2, None);
+            address_store.add_new_address(address_2, Some(String::from("aleph")));
+            assert!(address_store.storage.addresses.contains(&(address_2, None)));
+            assert!(!address_store.storage.addresses.contains(&(address_2, Some(String::from("aleph")))));
         }
 
         #[ink::test]
@@ -136,17 +134,15 @@ mod named_address_store {
             let mut bytes: [u8; 32]  = [0; 32];
 
             bytes[0] = 1;
-            let entry_1 = AccountId::from(bytes);
+            let address_1 = AccountId::from(bytes);
 
             bytes[0] = 4;
-            let entry_2 = AccountId::from(bytes);
+            let address_2 = AccountId::from(bytes);
 
-            address_store.add_new_address(entry_1, None);
-            address_store.add_new_address(entry_2, None);
-            assert!(address_store.storage.addresses.contains(&(entry_2, None)));
-
-            address_store.set_name_for_address(entry_1, String::from("NAME"));
-            assert_eq!(address_store.get_name_for_address(entry_1), Some(String::from("NAME")));
+            address_store.add_new_address(address_1, None);
+            address_store.add_new_address(address_2, None);
+            address_store.set_name_for_address(address_1, String::from("aleph"));
+            assert_eq!(address_store.get_name_for_address(address_1), Some(String::from("aleph")));
         }
     }
 }

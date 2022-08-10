@@ -36,7 +36,7 @@ mod efficient_address_store {
             }
         }
 
-        /// Adds new address to store, but only if it is not already present
+        /// Adds new address to store, but only if not already present
         #[ink(message)]
         pub fn add_new_address(&mut self, address: AccountId) {
             if !self.addresses.contains(&address) {

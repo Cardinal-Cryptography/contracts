@@ -13,7 +13,6 @@ mod address_store {
     }
 
     impl AddressStore {
-
         /// Initializes empty address store
         #[ink(constructor)]
         pub fn new() -> Self {
