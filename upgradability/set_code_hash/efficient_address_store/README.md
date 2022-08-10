@@ -10,10 +10,10 @@ This example provides a very similar functionality to the contract from `address
 It allows it's users to store some addresses, and to read the list of all addresses stored.
 However, unlike in `address_store`, it won't store an address if it is already present of the list.
 
-### Upgrading `address_store` smart contract: upgrade without changing storage layout
-
 The point of this example it to show how to perform a smart contract upgrade using `set_code_hash` method 
 in a case in which our storage layout does not change.
+
+### Upgrading `address_store` smart contract: upgrade without changing storage layout
 
 The difference between this contract, and `address_store` contract is in the fact, that this new one won't store
 the same address multiple times. This way of storing addresses in more efficient, so we might 
