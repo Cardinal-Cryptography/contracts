@@ -2,16 +2,16 @@
 
 This smart contract is part of an example showing how we can write upgradable smart contracts in ink! using `set_code_hash`.
 
-See `address_store` example first, if you haven't already.
+See `address_store` example first.
 
 ### Description
 
 This example provides a very similar functionality to the contract from `address_store` example. 
 It allows it's users to store some addresses, and to read the list of all addresses stored.
-However, unlike in `address_store`, it won't store an address if it is already present of the list.
+However, unlike in `address_store`, it won't store an address if it is already present on the list.
 
 The point of this example it to show how to perform a smart contract upgrade using `set_code_hash` method 
-in a case in which our storage layout does not change.
+in a case in which storage layout of the new contract does not differ from the old one.
 
 ### Upgrading `address_store` smart contract: upgrade without changing storage layout
 
@@ -25,16 +25,14 @@ adjustments to have this storage available in the new code.
 
 #### Migrating
 
-In many cases, just setting a new code hash won't be enough to achieve a desired behavior, we might want to
-perform some additional actions after the upgrade, so the state of our storage with match with the logic of
-the new code.
-
-In such a case we might want to provide a method `initialize` or `migrate` which will need to be called right after
+In some cases, old state won't match the logic of the new code, so we might want to perform some additional
+steps after the upgrade.
+In such a case we might want to provide a method `initialize` or `migrate`, which will need to be called right after
 the upgrade.
 
 With the code of our new `efficient_address_store` contract we would expect our storage to keep only one copy of each
 address, but right after the upgrade this might not be the case: the old code did not follow this rule.
-To enable us to fix the old storage, new code provides `migrate` method, which will erase the unnecessary copies.
+To enable us to fix the old storage, new code provides `migrate` method, which will erase unnecessary copies.
 
 #### Instructions
 - Build and deploy the `address_store` smart contract.
@@ -42,7 +40,7 @@ To enable us to fix the old storage, new code provides `migrate` method, which w
 - Call the `address_store` smart contract, pass hash of `efficient_address_store`'s code as an argument.
 - Change the ABI of the deployed contract to the ABI of `efficient_address_store` (`Add an existing contract` with address of the contract and `metadata.json` of `efficient_address_store`).
 - Call `migrate` through the new ABI.
-- You are finished. Now you can use the upgraded contract.
+- Now you can use contract in the upgraded version.
 
 ### Upgradability
 
