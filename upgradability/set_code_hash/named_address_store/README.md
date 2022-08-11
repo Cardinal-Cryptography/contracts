@@ -2,7 +2,7 @@
 
 This smart contract is part of an example showing how we can write upgradable smart contracts in ink! using `set_code_hash`.
 
-See `address_store` and `efficient_address_store` examples first, if you haven't already.
+See `address_store` and `efficient_address_store` examples first.
 
 ### Description
 
@@ -18,7 +18,7 @@ For an intorduction of how to upgrade with `set_code_hash` see `efficient_addres
 
 #### Storage collisions
 
-The big difference between the upgrade in `efficient_address_store` example, and in this one is that here, we want to change the storage layout.
+The big difference between the upgrade in `efficient_address_store` example, and in this one, is that here we want to change the storage layout.
 In both `address_store` and `efficient_address_store` we just needed to keep a `Vec` of addresses, so both contract codes mapped this `Vec` to the 
 same part of contract's storage. Now we want to store a `Vec` of pairs `(AccountId, Option<String>)`, so if we were to perform a simple upgrade
 like before, we would not be able to read the old data.
@@ -27,7 +27,7 @@ This time we need to store the new data in a different place.
 
 #### Uninitialized storage
 
-Another problem which arises with a change of the storage layout is the fact, that our new variables are uninitialized right after the upgrade.
+Another problem which arises with a change of the storage layout is the fact, that right after the upgrade our new variables are uninitialized.
 Since we just swap out the old code for the new one, the constructor of a new contract cannot be called, and we are not able to use our new storage.
 
 #### `openbrush::upgradeable_storage` macro
