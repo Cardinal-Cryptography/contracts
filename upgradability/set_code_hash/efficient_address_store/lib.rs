@@ -13,7 +13,6 @@ mod efficient_address_store {
     }
 
     impl EfficientAddressStore {
-
         /// Initializes empty address store
         #[ink(constructor)]
         pub fn new() -> Self {
@@ -22,18 +21,12 @@ mod efficient_address_store {
             }
         }
 
-        /// Performs simple storage migration from address_store contract
-        /// Should be run right after the upgrade, preferably just once
+        /// Removes duplicate AccountIds from addresses
+        /// Should be run after the upgrade from address_store
         #[ink(message)]
         pub fn migrate(&mut self) {
-            let temp_store = self.addresses.clone();
-            self.addresses = Vec::new();
-
-            for id in temp_store {
-                if !self.addresses.contains(&id){
-                    self.addresses.push(id);
-                }
-            }
+            self.addresses.sort();
+            self.addresses.dedup();
         }
 
         /// Adds new address to store, but only if not already present
@@ -75,18 +68,13 @@ mod efficient_address_store {
 
             bytes[0] = 1;
             let entry_1 = AccountId::from(bytes);
-
             bytes[0] = 4;
             let entry_2 = AccountId::from(bytes);
-
-            bytes[0] = 3;
-            let non_entry = AccountId::from(bytes);
 
             address_store.add_new_address(entry_1);
             address_store.add_new_address(entry_2);
             address_store.add_new_address(entry_2);
             assert!(address_store.addresses.contains(&entry_2));
-            assert!(!address_store.addresses.contains(&non_entry));
         }
 
         #[ink::test]
@@ -96,22 +84,14 @@ mod efficient_address_store {
 
             bytes[0] = 1;
             let entry_1 = AccountId::from(bytes);
-
             bytes[0] = 4;
             let entry_2 = AccountId::from(bytes);
-
 
             address_store.add_new_address(entry_1);
             address_store.add_new_address(entry_2);
             address_store.add_new_address(entry_1);
 
-            let mut entry_1_cnt = 0;
-            for entry in address_store.addresses {
-                if entry == entry_1 {
-                    entry_1_cnt += 1;
-                }
-            }
-
+            let entry_1_cnt = address_store.addresses.iter().filter(|&x| *x == entry_1).count();
             assert_eq!(entry_1_cnt, 1);
         }
     }

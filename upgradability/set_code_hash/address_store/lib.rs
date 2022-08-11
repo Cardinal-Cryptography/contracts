@@ -57,18 +57,12 @@ mod address_store {
 
             bytes[0] = 1;
             let entry_1 = AccountId::from(bytes);
-
             bytes[0] = 4;
             let entry_2 = AccountId::from(bytes);
 
-            bytes[0] = 3;
-            let non_entry = AccountId::from(bytes);
-
             address_store.add_new_address(entry_1);
             address_store.add_new_address(entry_2);
-            address_store.add_new_address(entry_2);
-            assert!(address_store.addresses.contains(&entry_2));
-            assert!(!address_store.addresses.contains(&non_entry));
+            assert!(address_store.addresses.contains(&entry_1));
         }
     }
 }
