@@ -43,6 +43,8 @@ mod named_address_store {
 
             // Move data to a new format
             self.storage.addresses = self._old_storage.iter().map(|&x| (x, None)).collect();
+            self._old_storage.clear();
+            self._old_storage.shrink_to_fit();
             self.storage.migration_performed = true;
         }
 
