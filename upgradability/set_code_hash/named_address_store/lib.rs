@@ -15,6 +15,7 @@ mod named_address_store {
         migration_performed: bool,
     }
 
+    #[derive(Default)]
     #[ink(storage)]
     pub struct NamedAddressStore {
         _old_storage: Vec<AccountId>,
@@ -25,13 +26,7 @@ mod named_address_store {
         /// Initializes empty address store
         #[ink(constructor)]
         pub fn new() -> Self {
-            Self {
-                _old_storage: Vec::new(),
-                storage: NewStorage{
-                    addresses: Vec::new(),
-                    migration_performed: false,
-                }
-            }
+            Default::default()
         }
 
         /// Performs data migration from the old format
@@ -42,15 +37,12 @@ mod named_address_store {
                 return;
             }
 
-            // Moving existing data to a new format
-            let mut adr_vec = Vec::<AccountId>::new();
-            for address in &self._old_storage {
-                if !adr_vec.contains(&address) {
-                    adr_vec.push(*address);
-                    self.storage.addresses.push((*address, None));
-                }
-            }
+            // Remove duplicates
+            self._old_storage.sort();
+            self._old_storage.dedup();
 
+            // Move data to a new format
+            self.storage.addresses = self._old_storage.iter().map(|&x| (x, None)).collect();
             self.storage.migration_performed = true;
         }
 
@@ -68,21 +60,17 @@ mod named_address_store {
         /// Gets name for a specified address
         #[ink(message)]
         pub fn get_name_for_address(&self, address: AccountId) -> Option<String> {
-            for entry in &self.storage.addresses {
-                if entry.0 == address {
-                    return entry.1.clone();
-                }
+            if let Some(x) = self.storage.addresses.iter().find(|x| x.0 == address) {
+                return x.1.clone();
             }
             None
         }
 
         /// Adds new address to store, but only if not already present
         #[ink(message)]
-        pub fn add_new_address(&mut self, address: AccountId, name: Option<String>) {
-            let (adr_vec, _): (Vec<AccountId>, Vec<_>) = self.storage.addresses.clone().into_iter().unzip();
-
-            if !adr_vec.contains(&address) {
-                self.storage.addresses.push((address, name));
+        pub fn add_new_address(&mut self, address: AccountId) {
+            if self.storage.addresses.iter().all(|x| x.0 != address) {
+                self.storage.addresses.push((address, None));
             }
         }
 
@@ -117,15 +105,12 @@ mod named_address_store {
 
             bytes[0] = 1;
             let address_1 = AccountId::from(bytes);
-
             bytes[0] = 4;
             let address_2 = AccountId::from(bytes);
 
-            address_store.add_new_address(address_1, None);
-            address_store.add_new_address(address_2, None);
-            address_store.add_new_address(address_2, Some(String::from("aleph")));
+            address_store.add_new_address(address_1);
+            address_store.add_new_address(address_2);
             assert!(address_store.storage.addresses.contains(&(address_2, None)));
-            assert!(!address_store.storage.addresses.contains(&(address_2, Some(String::from("aleph")))));
         }
 
         #[ink::test]
@@ -135,12 +120,11 @@ mod named_address_store {
 
             bytes[0] = 1;
             let address_1 = AccountId::from(bytes);
-
             bytes[0] = 4;
             let address_2 = AccountId::from(bytes);
 
-            address_store.add_new_address(address_1, None);
-            address_store.add_new_address(address_2, None);
+            address_store.add_new_address(address_1);
+            address_store.add_new_address(address_2);
             address_store.set_name_for_address(address_1, String::from("aleph"));
             assert_eq!(address_store.get_name_for_address(address_1), Some(String::from("aleph")));
         }

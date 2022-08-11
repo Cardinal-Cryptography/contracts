@@ -7,6 +7,7 @@ mod efficient_address_store {
     use ink_prelude::vec::Vec;
     use ink_env::set_code_hash;
 
+    #[derive(Default)]
     #[ink(storage)]
     pub struct EfficientAddressStore {
         addresses: Vec<AccountId>,
@@ -16,9 +17,7 @@ mod efficient_address_store {
         /// Initializes empty address store
         #[ink(constructor)]
         pub fn new() -> Self {
-            Self {
-                addresses: Vec::new(),
-            }
+            Default::default()
         }
 
         /// Removes duplicate AccountIds from addresses
