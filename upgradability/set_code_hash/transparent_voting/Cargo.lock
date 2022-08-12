@@ -116,21 +116,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "efficient_address_store"
-version = "0.1.0"
-dependencies = [
- "ink_engine",
- "ink_env",
- "ink_lang",
- "ink_metadata",
- "ink_prelude",
- "ink_primitives",
- "ink_storage",
- "parity-scale-codec",
- "scale-info",
-]
-
-[[package]]
 name = "either"
 version = "1.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -666,6 +651,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d82e1a7758622a465f8cee077614c73484dac5b836c02ff6a40d5d1010324d7"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "transparent_voting"
+version = "0.1.0"
+dependencies = [
+ "ink_engine",
+ "ink_env",
+ "ink_lang",
+ "ink_metadata",
+ "ink_prelude",
+ "ink_primitives",
+ "ink_storage",
+ "parity-scale-codec",
+ "scale-info",
 ]
 
 [[package]]
