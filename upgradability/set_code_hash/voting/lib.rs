@@ -24,6 +24,8 @@ mod voting {
             })
         }
 
+        /// Adds a new voter, can be performed only by contract instantiator
+        /// Will panic if specified address is already a voter
         #[ink(message)]
         pub fn add_new_voter(&mut self, voter: AccountId) {
             assert!(self.env().caller() == self.admin);
@@ -32,6 +34,7 @@ mod voting {
             }
         }
 
+        /// Current result of the vote
         #[ink(message)]
         pub fn get_winner(&self) -> u8 {
             return (self.votes[0] < self.votes[1]) as u8;

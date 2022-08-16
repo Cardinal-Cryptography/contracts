@@ -25,6 +25,8 @@ mod voting_fixed {
             ink_lang::utils::initialize_contract(|_| {})
         }
 
+        /// Performs migration from `voting`
+        /// Should be called once, right after the upgrade
         #[ink(message)]
         pub fn migrate(&mut self) {
             assert!(self.env().caller() == self._admin);
@@ -32,6 +34,7 @@ mod voting_fixed {
             self.votes.data[1] = self._old_votes[1] as u64;
         }
 
+        /// Current result of the vote
         #[ink(message)]
         pub fn get_winner(&self) -> u8 {
             return (self.votes.data[0] < self.votes.data[1]) as u8;
