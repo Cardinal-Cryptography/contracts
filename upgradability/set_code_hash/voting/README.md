@@ -1,15 +1,18 @@
-## Address store example
+## Voting example
 
 This smart contract is part of an example showing how we can write upgradable smart contracts in ink! using `set_code_hash`.
 
 ### Description
 
-This is a very simple smart contract, which provides methods that allow it's users to store some addresses in it's storage (using `add_new_address`),
-and read the list of all addresses (using `get_addresses`).
+Smart contract which provides a simple voting interface:
+- `add_new_voter` allows contract's instantiator to add new accounts with voting rights.
+- `vote_0` and `vote_1` allow users with voting rights to vote on selected option (each
+accounts gets one vote).
+- `get_winner` returns the current result of the vote.
 
 ### Upgradability
 
-We can upgrade this contract by using `set_code` method, which allows us to assign new code to this contract's address, 
-whilst preserving old storage (in this case it means that the new code will have access to our address list).
+We can upgrade this contract by using `set_code` method, which allows contract's instantiator to assign new code to this contract's address,
+whilst preserving old storage.
 
-Check `efficient_address_store` and `named_address_store` examples for a more detailed description of how to upgrade this contract.
+Check `transparent_voting` and `voting_fixed` examples for a more detailed description of how to upgrade this contract.
