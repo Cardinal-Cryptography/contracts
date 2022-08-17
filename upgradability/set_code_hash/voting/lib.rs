@@ -6,6 +6,19 @@ use ink_lang as ink;
 mod voting {
     use ink_env::set_code_hash;
     use ink_storage::{traits::SpreadAllocate, Mapping};
+    use scale::{Decode, Encode};
+
+    #[derive(Debug, PartialEq, Eq, Encode, Decode)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum Error {
+        PermissionDenied,
+        NotVoter,
+        HasAlreadyVoted,
+        AlreadyVoter,
+        SetCodeFailed,
+    }
+
+    pub type Result = core::result::Result<(), Error>;
 
     #[ink(storage)]
     #[derive(SpreadAllocate)]
@@ -24,14 +37,19 @@ mod voting {
             })
         }
 
-        /// Adds a new voter, can be performed only by contract instantiator
-        /// Will panic if specified address is already a voter
+        /// Adds a new voter, can be performed only by contract instantiator and only once for each account
         #[ink(message)]
-        pub fn add_new_voter(&mut self, voter: AccountId) {
-            assert!(self.env().caller() == self.admin);
-            if !self.voters.contains(voter) {
-                self.voters.insert_return_size(voter, &false);
+        pub fn add_new_voter(&mut self, voter: AccountId) -> Result {
+            if self.env().caller() != self.admin {
+                return Err(Error::PermissionDenied);
             }
+
+            if self.voters.contains(voter) {
+                return Err(Error::AlreadyVoter);
+            }
+
+            self.voters.insert(voter, &false);
+            Ok(())
         }
 
         /// Current result of the vote
@@ -40,36 +58,47 @@ mod voting {
             return (self.votes[0] < self.votes[1]) as u8;
         }
 
-        fn vote(&mut self, on: usize) {
+        fn vote(&mut self, on: usize) -> Result {
             let voter = self.env().caller();
-            assert!(self.voters.contains(voter));
-            assert!(!self.voters.get(voter).unwrap());
+            if !self.voters.contains(voter) {
+                return Err(Error::NotVoter);
+            }
+
+            if self.voters.get(voter).unwrap() {
+                return Err(Error::HasAlreadyVoted);
+            }
+
             self.votes[on] += 1;
             self.voters.insert(voter, &true);
+            Ok(())
         }
 
         /// Vote for option 0
         #[ink(message)]
-        pub fn vote_0(&mut self) {
-            self.vote(0);
+        pub fn vote_0(&mut self) -> Result {
+            self.vote(0)?;
+            Ok(())
         }
 
         /// Vote for option 1
         #[ink(message)]
-        pub fn vote_1(&mut self) {
-            self.vote(1);
+        pub fn vote_1(&mut self) -> Result {
+            self.vote(1)?;
+            Ok(())
         }
 
         /// Sets new code hash, updates contract code
         #[ink(message)]
-        pub fn set_code(&mut self, code_hash: [u8; 32]) {
-            assert!(self.env().caller() == self.admin);
-            set_code_hash(&code_hash).unwrap_or_else(|err| {
-                panic!(
-                    "Failed to `set_code_hash` to {:?} due to {:?}",
-                    code_hash, err
-                )
-            });
+        pub fn set_code(&mut self, code_hash: [u8; 32]) -> Result {
+            if self.env().caller() != self.admin {
+                return Err(Error::PermissionDenied);
+            }
+
+            if let Err(_) = set_code_hash(&code_hash) {
+                return Err(Error::SetCodeFailed);
+            };
+
+            Ok(())
         }
     }
 }
