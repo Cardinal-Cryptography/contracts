@@ -101,4 +101,78 @@ mod voting {
             Ok(())
         }
     }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+        use ink_lang as ink;
+        use ink_env::test::{set_caller, default_accounts};
+        use ink_env::DefaultEnvironment;
+
+        #[ink::test]
+        fn non_voters_cannot_vote() {
+            let accounts = default_accounts::<DefaultEnvironment>();
+            set_caller::<DefaultEnvironment>(accounts.alice);
+            let mut voting = Voting::new();
+
+            set_caller::<DefaultEnvironment>(accounts.bob);
+            assert!(voting.vote_1().is_err());
+        }
+
+        #[ink::test]
+        fn voters_can_vote() {
+            let accounts = default_accounts::<DefaultEnvironment>();
+            set_caller::<DefaultEnvironment>(accounts.alice);
+            let mut voting = Voting::new();
+            assert!(voting.add_new_voter(accounts.bob).is_ok());
+
+            set_caller::<DefaultEnvironment>(accounts.bob);
+            assert!(voting.vote_1().is_ok());
+        }
+
+        #[ink::test]
+        fn non_admins_cannot_add_voters() {
+            let accounts = default_accounts::<DefaultEnvironment>();
+            set_caller::<DefaultEnvironment>(accounts.alice);
+            let mut voting = Voting::new();
+
+            set_caller::<DefaultEnvironment>(accounts.bob);
+            assert!(voting.add_new_voter(accounts.charlie).is_err());
+        }
+
+        #[ink::test]
+        fn no_multiple_votes() {
+            let accounts = default_accounts::<DefaultEnvironment>();
+            set_caller::<DefaultEnvironment>(accounts.alice);
+            let mut voting = Voting::new();
+            assert!(voting.add_new_voter(accounts.bob).is_ok());
+
+            set_caller::<DefaultEnvironment>(accounts.bob);
+            assert!(voting.vote_1().is_ok());
+            assert!(voting.vote_0().is_err());
+        }
+
+        #[ink::test]
+        fn simple_voting_scenario() {
+            let accounts = default_accounts::<DefaultEnvironment>();
+            set_caller::<DefaultEnvironment>(accounts.alice);
+            let mut voting = Voting::new();
+
+            assert!(voting.add_new_voter(accounts.bob).is_ok());
+            assert!(voting.add_new_voter(accounts.charlie).is_ok());
+            assert!(voting.add_new_voter(accounts.django).is_ok());
+            assert!(voting.add_new_voter(accounts.eve).is_ok());
+
+            set_caller::<DefaultEnvironment>(accounts.bob);
+            assert!(voting.vote_0().is_ok());
+            set_caller::<DefaultEnvironment>(accounts.charlie);
+            assert!(voting.vote_1().is_ok());
+            set_caller::<DefaultEnvironment>(accounts.django);
+            assert!(voting.vote_0().is_ok());
+            set_caller::<DefaultEnvironment>(accounts.eve);
+            assert!(voting.vote_0().is_ok());
+
+            assert!(voting.get_winner() == 0);
+        }
+    }
 }
