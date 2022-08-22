@@ -5,7 +5,7 @@ mod voting_fixed {
     use ink_storage::{traits::SpreadAllocate, Mapping};
     use scale::{Decode, Encode};
 
-    #[derive(Debug, PartialEq, Eq, Encode, Decode)]
+    #[derive(Eq, PartialEq, Debug, Decode, Encode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
         PermissionDenied,
@@ -89,7 +89,7 @@ mod voting_fixed {
             Ok(self.vote(1)?)
         }
 
-        // Following methods are not messageses and can be used for tests only
+        // Following methods are not messages and can be used for tests only
 
         /// Method for adding new voter.
         pub fn _old_add_new_voter(&mut self, voter: AccountId) -> Result {
