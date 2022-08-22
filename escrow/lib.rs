@@ -9,7 +9,7 @@
 //!
 //! ## Overview
 //!
-//! Escrow is the third party which holds the asset(asset can be money, bond, stocks)
+//! Escrow is the third party which holds the asset (asset can be money, bond, stocks)
 //! on the presence of two parties. Escrow will release the fund when certain conditions are met.
 //!
 //! In this contract, there are two parties, a buyer, and a seller. The buyer wants
@@ -18,7 +18,7 @@
 //!
 //! This contract can end up in two ways:
 //! * either delivery of the goods is confirmed by the buyer -> a deposit is transferred to the seller, or
-//! * delivery is canceller by the seller -> a deposit is refunded to the buyer.
+//! * delivery is cancelled by the seller -> a deposit is refunded to the buyer.
 //! In each way contract terminates itself and any remaining funds are transferred to contract
 //! constructor account (the buyer)
 //!
@@ -77,11 +77,17 @@ pub mod escrow {
         /// Instantiates new escrow contract with buyer as contract author
         #[ink(constructor, payable)]
         pub fn new(seller: AccountId) -> Self {
-            Self {
+            let escrow = Self {
                 buyer: Self::env().caller(),
                 seller,
                 deposit: Self::env().transferred_value(),
-            }
+            };
+            Self::env().emit_event(Transfer {
+                to: Self::env().account_id(),
+                value: escrow.deposit,
+            });
+
+            escrow
         }
 
         /// Returns currently stored deposit

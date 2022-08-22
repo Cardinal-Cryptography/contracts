@@ -1,8 +1,9 @@
 [package]
 name = "escrow"
 version = "0.1.0"
-authors = ["[your_name] <[your_email]>"]
+authors = ["Cardinal Cryptography"]
 edition = "2021"
+license = "Apache 2.0"
 
 [dependencies]
 ink_primitives = { version = "3.3", default-features = false }
