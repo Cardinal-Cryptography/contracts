@@ -76,15 +76,13 @@ mod voting {
         /// Vote for option 0
         #[ink(message)]
         pub fn vote_0(&mut self) -> Result {
-            self.vote(0)?;
-            Ok(())
+            Ok(self.vote(0)?)
         }
 
         /// Vote for option 1
         #[ink(message)]
         pub fn vote_1(&mut self) -> Result {
-            self.vote(1)?;
-            Ok(())
+            Ok(self.vote(1)?)
         }
 
         /// Sets new code hash, updates contract code
@@ -116,7 +114,7 @@ mod voting {
             let mut voting = Voting::new();
 
             set_caller::<DefaultEnvironment>(accounts.bob);
-            assert!(voting.vote_1().is_err());
+            assert!(matches!(voting.vote_1(), Err(Error::NotVoter)));
         }
 
         #[ink::test]
@@ -137,7 +135,7 @@ mod voting {
             let mut voting = Voting::new();
 
             set_caller::<DefaultEnvironment>(accounts.bob);
-            assert!(voting.add_new_voter(accounts.charlie).is_err());
+            assert!(matches!(voting.add_new_voter(accounts.charlie), Err(Error::PermissionDenied)));
         }
 
         #[ink::test]
@@ -149,7 +147,7 @@ mod voting {
 
             set_caller::<DefaultEnvironment>(accounts.bob);
             assert!(voting.vote_1().is_ok());
-            assert!(voting.vote_0().is_err());
+            assert!(matches!(voting.vote_0(), Err(Error::HasAlreadyVoted)));
         }
 
         #[ink::test]

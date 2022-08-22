@@ -1,8 +1,8 @@
-## Voting example
+# Voting example
 
 This smart contract is part of an example showing how we can write upgradable smart contracts in ink! using `set_code_hash`.
 
-### Description
+## Description
 
 Smart contract which provides a simple voting interface:
 - `add_new_voter` allows contract's instantiator to add new accounts with voting rights.
@@ -10,7 +10,7 @@ Smart contract which provides a simple voting interface:
 accounts gets one vote).
 - `get_winner` returns the current result of the vote.
 
-### Upgradability
+## Upgradability
 
 We can upgrade this contract by using `set_code` method, which allows contract's instantiator to assign new code to this contract's address,
 whilst preserving old storage.
