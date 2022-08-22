@@ -80,13 +80,13 @@ mod voting_fixed {
         /// Vote for option 0
         #[ink(message)]
         pub fn vote_0(&mut self) -> Result {
-            Ok(self.vote(0)?)
+            self.vote(0)
         }
 
         /// Vote for option 1
         #[ink(message)]
         pub fn vote_1(&mut self) -> Result {
-            Ok(self.vote(1)?)
+            self.vote(1)
         }
 
         // Following methods are not messages and can be used for tests only

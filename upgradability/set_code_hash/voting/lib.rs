@@ -76,13 +76,13 @@ mod voting {
         /// Vote for option 0
         #[ink(message)]
         pub fn vote_0(&mut self) -> Result {
-            Ok(self.vote(0)?)
+            self.vote(0)
         }
 
         /// Vote for option 1
         #[ink(message)]
         pub fn vote_1(&mut self) -> Result {
-            Ok(self.vote(1)?)
+            self.vote(1)
         }
 
         /// Sets new code hash, updates contract code
