@@ -2,7 +2,7 @@
 
 ## `set_code_hash` method
 
-When using `set_code_hash` for upgrading contracts we basically tell `pallet-contracts` to assign the code of
+When using `set_code_hash` (https://github.com/paritytech/ink/blob/0941e381f76211a4bc3508b8f168ca05d63b4ec9/crates/env/src/api.rs#L603) for upgrading contracts we basically tell `pallet-contracts` to assign the code of
 a different contract to our current contract's address. This preserves old contract's storage.
 
 ## Example contracts
