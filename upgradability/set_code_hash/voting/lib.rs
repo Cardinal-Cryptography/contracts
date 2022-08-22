@@ -55,7 +55,7 @@ mod voting {
         /// Current result of the vote
         #[ink(message)]
         pub fn get_winner(&self) -> u8 {
-            return (self.votes[0] < self.votes[1]) as u8;
+            (self.votes[0] < self.votes[1]) as u8
         }
 
         fn vote(&mut self, on: usize) -> Result {
@@ -92,7 +92,7 @@ mod voting {
                 return Err(Error::PermissionDenied);
             }
 
-            if let Err(_) = set_code_hash(&code_hash) {
+            if set_code_hash(&code_hash).is_err() {
                 return Err(Error::SetCodeFailed);
             };
 

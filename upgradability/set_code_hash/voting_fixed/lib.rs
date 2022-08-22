@@ -59,7 +59,7 @@ mod voting_fixed {
         /// Current result of the vote
         #[ink(message)]
         pub fn get_winner(&self) -> u8 {
-            return (self.votes.data[0] < self.votes.data[1]) as u8;
+            (self.votes.data[0] < self.votes.data[1]) as u8
         }
 
         fn vote(&mut self, on: usize) -> Result {
