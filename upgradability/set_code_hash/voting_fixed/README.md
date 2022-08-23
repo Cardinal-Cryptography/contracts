@@ -42,7 +42,7 @@ Since we just swap out the old code for the new one, the constructor of a new co
 
 ### `openbrush::upgradeable_storage` macro
 
-Solving both of these problems might generate a quite a lot of boilerplate when writing in pure ink!, so in this example we use `upgradeable_storage(STORAGE_KEY)` macro
+Solving both of these problems might generate a quite a lot of boilerplate when writing in pure ink!, so in this example we use `upgradeable_storage(STORAGE_KEY)` macro (https://github.com/Supercolony-net/openbrush-contracts/blob/main/lang/macro/src/lib.rs#L447)
 from Openbrush.
 
 It enables us to create a part of storage which is stored under the selected `STORAGE_KEY`, and additionally guards us against using uninitialized variables:
