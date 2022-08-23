@@ -32,4 +32,4 @@ adjustments to have this storage available in the new code.
 
 ## Upgradability
 
-Similarly to `voting` this smart contract provides `set_code` method, which enables us to change it's code, whilst preserving storage and address.
+Similarly to `voting` this smart contract provides `set_code` method, which enables us to change it's code, whilst preserving storage and address. Check `voting_fixed` example for a more detailed description of how to upgrade this contract.
