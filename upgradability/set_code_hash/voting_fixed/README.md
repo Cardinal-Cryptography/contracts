@@ -6,20 +6,21 @@ See `voting` and `transparent_voting` examples first.
 
 ## Description
 
-This contract provides a simple voting interface which allows voting for one of some two options. However, when compared to
-`voting`, this contract has ability to store more votes and forbids adding new voters or
+This contract provides a simple voting interface which allows voting for one of some two options and checking current number of votes.
+However, when compared to `transparent_voting`, this contract has ability to store more votes and forbids adding new voters or
 upgrading itself.
 
 The goal of this example is to show how one might perform a smart contract upgrade (using `set_code_hash` method) in a case in which
 storage layouts of the original contract and the new one differ.
 
-## Upgrading `voting` smart contract: upgrade with storage layout change
+## Upgrading `transparent_voting` smart contract: upgrade with storage layout change
 
 For an introduction of how to upgrade with `set_code_hash` see `transparent_voting` example.
 
 ### Example scenario
 
-Let's say you deployed `voting` contract, updated list of the allowed voters to it's
+Let's say you deployed `transparent_voting` contract (or you have upgraded `voting` to `transparent_voting`),
+updated list of the allowed voters to it's
 desired state and gathered some votes. Then you realized that the contract has a flaw:
 votes are stored in `u8` counters, and will soon overflow.
 
@@ -57,13 +58,16 @@ Here, it is simply moving votes from old counters to the new ones, which is done
 `migrate` method.
 
 ### Instructions
-- Build and deploy the `voting` smart contract.
+- Build and deploy the `transparent_voting` smart contract.
 - Build and upload code of `voting_fixed` smart contract.
-- Use the `voting` contract.
-- Call the `voting` smart contract, pass hash of `voting_fixed` code as an argument.
+- Use the `transparent_voting` contract.
+- Call the `transparent_voting` smart contract, pass hash of `voting_fixed` code as an argument.
 - Change the ABI of the deployed contract to the ABI of `voting_fixed` (`Add an existing contract` with address of the contract and `metadata.json` of `voting_fixed`).
 - Call `migrate` on the contract.
 - Now you can use contract in the upgraded version.
+
+Note: Since `transparent_voting` and `voting` have the same storage layout, you can use
+this contract to upgrade both of the previous examples.
 
 ## No longer upgradeable
 

@@ -89,6 +89,18 @@ mod voting_fixed {
             self.vote(1)
         }
 
+        /// Get number of votes for option 0
+        #[ink(message)]
+        pub fn votes_for_0(&self) -> u64 {
+            self.votes.data[0]
+        }
+
+        /// Get number of votes for option 1
+        #[ink(message)]
+        pub fn votes_for_1(&self) -> u64 {
+            self.votes.data[1]
+        }
+
         // Following methods are not messages and can be used for tests only
 
         /// Method for adding new voter.
@@ -192,6 +204,8 @@ mod voting_fixed {
             assert!(voting.vote_1().is_ok());
 
             assert!(voting.get_winner() == 0);
+            assert!(voting.votes_for_0() == 3);
+            assert!(voting.votes_for_1() == 2);
         }
     }
 }
