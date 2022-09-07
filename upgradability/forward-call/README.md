@@ -18,4 +18,4 @@ A simple contract which role is to store text data for some `AccountIds` eg. con
 ### `address_book_aggregator`
 
 Contract that is able to store metadata of several `address_book` contracts and query them for info about specified `AccountId`.
-Owner of the contract can add/modify contracts that the queries are forwarded to.
+Owner of the contract can add/change which contracts queries will be forwarded to.
