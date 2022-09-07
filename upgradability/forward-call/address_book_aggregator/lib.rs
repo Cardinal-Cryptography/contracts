@@ -34,6 +34,7 @@ mod address_book_aggregator {
 
         /// Allows owner of this contract to add/modify one of
         /// the addresses that we forward to.
+        /// Returns true if this operation was successful.
         #[ink(message)]
         pub fn set_address_book(&mut self, contract_id: AccountId, get_selector: SelectorData, book_id: u64) -> bool {
             if self.env().caller() != self.owner || book_id as usize > MAX_BOOK_COUNT {

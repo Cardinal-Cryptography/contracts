@@ -23,6 +23,7 @@ mod address_book {
         }
 
         /// Sets contact info of the caller.
+        /// Returns true if this operation was successful.
         #[ink(message)]
         pub fn set_info(&mut self, info: String) -> bool {
             if info.len() > MAX_INFO_LEN {
