@@ -7,7 +7,7 @@ mod address_book {
     use ink_storage::{traits::SpreadAllocate, Mapping};
     use ink_prelude::string::String;
 
-    const MAX_INFO_LEN: usize = 20;
+    const MAX_INFO_SIZE: usize = 20;
 
     #[ink(storage)]
     #[derive(SpreadAllocate)]
@@ -26,7 +26,7 @@ mod address_book {
         /// Returns true if this operation was successful.
         #[ink(message)]
         pub fn set_info(&mut self, info: String) -> bool {
-            if info.len() > MAX_INFO_LEN || info.capacity() > MAX_INFO_LEN {
+            if info.capacity() > MAX_INFO_SIZE {
                 return false;
             }
 

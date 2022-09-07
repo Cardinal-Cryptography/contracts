@@ -11,7 +11,7 @@ mod address_book_aggregator {
     type ExternalMessageData = Option<(AccountId, SelectorData)>;
 
     const MAX_BOOK_COUNT: usize = 5;
-    const MAX_RETURNED_INFO_LEN: usize = 20;
+    const MAX_RETURNED_INFO_SIZE: usize = 20;
 
     #[ink(storage)]
     pub struct AddressBookAggregator {
@@ -71,7 +71,7 @@ mod address_book_aggregator {
                         .fire();
 
                     if let Ok(Some(info)) = res {
-                        if info.len() <= MAX_RETURNED_INFO_LEN && info.capacity() <= MAX_RETURNED_INFO_LEN {
+                        if info.capacity() <= MAX_RETURNED_INFO_SIZE {
                             return Some(info);
                         }
                     }
