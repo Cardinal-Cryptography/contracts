@@ -15,7 +15,7 @@ It allows owner of the `address_book_aggregator` contract (instantiator) to add/
 
 ## Upgradability
 
-Basic upgrade of this contract adds a new contract to the list of forwarded to contracts and thus enlarging the amount of account info that can be retrieved.
+Basic upgrade of this contract adds a new contract to the list of forwarded to contracts and thus increases the amount of account info that can be retrieved.
 
 As the only reqiurement on the queried contracts is that they need to provide a message that takes `AccountId` and returns `Option<String>`, an owner of
 the `address_book_aggregator` contract can change it's behaviour by changing set of the memorized contracts.
