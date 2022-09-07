@@ -2,6 +2,8 @@
 
 These examples show one of the ways of using forward calls to achieve smart contract upgradability.
 
+It does not follow a typical forward-call proxy pattern with a catch-all method, to see such a proxy take a look at: https://github.com/paritytech/ink/tree/master/examples/upgradeable-contracts/forward-calls.  
+
 ## Forward call
 
 A cross-contract call which is executed in the context of an external contract, this execution won't read/write 
