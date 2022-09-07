@@ -3,7 +3,7 @@
 use ink_lang as ink;
 
 #[ink::contract]
-mod contact_db {
+mod address_book {
     use ink_storage::{traits::SpreadAllocate, Mapping};
     use ink_prelude::string::String;
 
@@ -11,12 +11,11 @@ mod contact_db {
 
     #[ink(storage)]
     #[derive(SpreadAllocate)]
-    pub struct ContactDb {
+    pub struct AddressBook {
         contact_info: Mapping<AccountId, String>,
     }
 
-    impl ContactDb {
-
+    impl AddressBook {
         /// Initializes an empty contact info DB.
         #[ink(constructor)]
         pub fn new() -> Self {
@@ -51,7 +50,7 @@ mod contact_db {
         #[ink::test]
         fn simple_set_works() {
             let accounts = default_accounts::<DefaultEnvironment>();
-            let mut contact_db = ContactDb::new();
+            let mut contact_db = AddressBook::new();
             set_caller::<DefaultEnvironment>(accounts.alice);
 
             assert!(contact_db.set_info(String::from("Alice")));
@@ -61,7 +60,7 @@ mod contact_db {
         #[ink::test]
         fn len_bound_works() {
             let accounts = default_accounts::<DefaultEnvironment>();
-            let mut contact_db = ContactDb::new();
+            let mut contact_db = AddressBook::new();
             set_caller::<DefaultEnvironment>(accounts.alice);
 
             assert!(!contact_db.set_info(String::from("Alice -------------------")));
