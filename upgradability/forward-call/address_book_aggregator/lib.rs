@@ -71,7 +71,7 @@ mod address_book_aggregator {
                         .fire();
 
                     if let Ok(Some(info)) = res {
-                        if info.len() <= MAX_RETURNED_INFO_LEN {
+                        if info.len() <= MAX_RETURNED_INFO_LEN && info.capacity() <= MAX_RETURNED_INFO_LEN {
                             return Some(info);
                         }
                     }
