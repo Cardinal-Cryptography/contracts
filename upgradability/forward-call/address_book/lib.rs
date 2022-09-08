@@ -26,7 +26,7 @@ mod address_book {
         /// Returns true if this operation was successful.
         #[ink(message)]
         pub fn set_info(&mut self, info: String) -> bool {
-            if info.capacity() > MAX_INFO_SIZE {
+            if info.len() > MAX_INFO_SIZE {
                 return false;
             }
 

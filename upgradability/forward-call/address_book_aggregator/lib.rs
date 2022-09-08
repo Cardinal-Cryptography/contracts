@@ -28,7 +28,7 @@ mod address_book_aggregator {
         pub fn new() -> Self {
             Self {
                 owner: Self::env().caller(),
-                address_books: [None; 5],
+                address_books: [None; MAX_BOOK_COUNT],
             }
         }
 
@@ -45,12 +45,25 @@ mod address_book_aggregator {
             true
         }
 
+        /// Allows owner of this contract to remove one of
+        /// the addresses we forward to.
+        /// Returns true if this operation was successful.
+        #[ink(message)]
+        pub fn remove_address_book(&mut self, book_id: u64) -> bool {
+            if self.env().caller() != self.owner || book_id as usize > MAX_BOOK_COUNT {
+                return false;
+            }
+
+            self.address_books[book_id as usize] = None;
+            true
+        }
+
         /// A function which queries memorized contracts
         /// for contact info of a specified address.
         #[ink(message)]
         pub fn get_info(&self, account_id: AccountId) -> Option<String> {
-            for id in 0..MAX_BOOK_COUNT {
-                if let Some(message_data) = self.address_books[id] {
+            for id in (0..MAX_BOOK_COUNT).rev() {
+                if let Some((forward_to, selector)) = self.address_books[id] {
 
                     // Here we perform a forward call to a contract that is supposed
                     // to store contact info for some addresses.
@@ -59,19 +72,19 @@ mod address_book_aggregator {
                     let res = ink_env::call::build_call::<ink_env::DefaultEnvironment>()
                         .call_type(
                             Call::new()
-                            .callee(message_data.0)
+                            .callee(forward_to)
                             .transferred_value(0)
                             .gas_limit(0),
                             )
                         .exec_input(
-                            ExecutionInput::new(Selector::new(message_data.1))
+                            ExecutionInput::new(Selector::new(selector))
                             .push_arg(account_id)
                             )
                         .returns::<Option<String>>()
                         .fire();
 
                     if let Ok(Some(info)) = res {
-                        if info.capacity() <= MAX_RETURNED_INFO_SIZE {
+                        if info.len() <= MAX_RETURNED_INFO_SIZE {
                             return Some(info);
                         }
                     }
