@@ -83,19 +83,13 @@ mod address_book_aggregator {
                     // to store contact info for some addresses.
                     // If we are able to retrieve this info, then we return it.
                     // Otherwise we will continue to search in the rest of "address books".
-                    let res = ink_env::call::build_call::<ink_env::DefaultEnvironment>()
-                        .call_type(
-                            Call::new()
-                            .callee(forward_to)
-                            )
-                        .exec_input(
-                            ExecutionInput::new(Selector::new(selector))
-                            .push_arg(account_id)
-                            )
+                    let call_result = ink_env::call::build_call::<ink_env::DefaultEnvironment>()
+                        .call_type(Call::new().callee(forward_to))
+                        .exec_input(ExecutionInput::new(Selector::new(selector)).push_arg(account_id))
                         .returns::<Option<String>>()
                         .fire();
 
-                    if let Ok(Some(info)) = res {
+                    if let Ok(Some(info)) = call_result {
                         if info.len() <= MAX_RETURNED_INFO_SIZE {
                             return Some(info);
                         }
