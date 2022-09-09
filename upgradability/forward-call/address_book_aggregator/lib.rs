@@ -87,8 +87,6 @@ mod address_book_aggregator {
                         .call_type(
                             Call::new()
                             .callee(forward_to)
-                            .transferred_value(0)
-                            .gas_limit(0),
                             )
                         .exec_input(
                             ExecutionInput::new(Selector::new(selector))
