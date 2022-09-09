@@ -81,7 +81,7 @@ mod address_book_aggregator {
 
                     // Here we perform a forward call to a contract that is supposed
                     // to store contact info for some addresses.
-                    // If we are able to retrieve this info, then we retrurn it.
+                    // If we are able to retrieve this info, then we return it.
                     // Otherwise we will continue to search in the rest of "address books".
                     let res = ink_env::call::build_call::<ink_env::DefaultEnvironment>()
                         .call_type(
