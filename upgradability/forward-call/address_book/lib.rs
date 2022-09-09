@@ -6,6 +6,13 @@ use ink_lang as ink;
 mod address_book {
     use ink_storage::{traits::SpreadAllocate, Mapping};
     use ink_prelude::string::String;
+    use scale::{Decode, Encode};
+
+    #[derive(Eq, PartialEq, Debug, Decode, Encode)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum Error {
+        InfoTooLong,
+    }
 
     const MAX_INFO_SIZE: usize = 20;
 
@@ -23,15 +30,14 @@ mod address_book {
         }
 
         /// Sets contact info of the caller.
-        /// Returns true if this operation was successful.
         #[ink(message)]
-        pub fn set_info(&mut self, info: String) -> bool {
+        pub fn set_info(&mut self, info: String) -> Result<(), Error> {
             if info.len() > MAX_INFO_SIZE {
-                return false;
+                return Err(Error::InfoTooLong);
             }
 
             self.contact_info.insert(self.env().caller(), &info);
-            true
+            Ok(())
         }
 
         /// Gets contact info of the specified address.
@@ -54,7 +60,7 @@ mod address_book {
             let mut contact_db = AddressBook::new();
             set_caller::<DefaultEnvironment>(accounts.alice);
 
-            assert!(contact_db.set_info(String::from("Alice")));
+            assert_eq!(contact_db.set_info(String::from("Alice")), Ok(()));
             assert_eq!(contact_db.get_info(accounts.alice), Some(String::from("Alice")));
         }
 
@@ -64,7 +70,7 @@ mod address_book {
             let mut contact_db = AddressBook::new();
             set_caller::<DefaultEnvironment>(accounts.alice);
 
-            assert!(!contact_db.set_info(String::from("Alice -------------------")));
+            assert_eq!(contact_db.set_info(String::from("Alice -------------------")), Err(Error::InfoTooLong));
             assert_eq!(contact_db.get_info(accounts.alice), None);
         }
     }

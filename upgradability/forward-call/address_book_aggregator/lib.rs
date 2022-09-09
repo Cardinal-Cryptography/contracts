@@ -6,6 +6,14 @@ use ink_lang as ink;
 mod address_book_aggregator {
     use ink_env::call::{Call, ExecutionInput, Selector};
     use ink_prelude::string::String;
+    use scale::{Decode, Encode};
+
+    #[derive(Eq, PartialEq, Debug, Decode, Encode)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum Error {
+        PermissionDenied,
+        InvalidBookId,
+    }
 
     type SelectorData = [u8; 4];
     type ExternalMessageData = Option<(AccountId, SelectorData)>;
@@ -34,28 +42,34 @@ mod address_book_aggregator {
 
         /// Allows owner of this contract to add/modify one of
         /// the addresses that we forward to.
-        /// Returns true if this operation was successful.
         #[ink(message)]
-        pub fn set_address_book(&mut self, contract_id: AccountId, get_selector: SelectorData, book_id: u64) -> bool {
-            if self.env().caller() != self.owner || book_id as usize > MAX_BOOK_COUNT {
-                return false;
+        pub fn set_address_book(&mut self, contract_id: AccountId, get_selector: SelectorData, book_id: u64) -> Result<(), Error> {
+            if self.env().caller() != self.owner {
+                return Err(Error::PermissionDenied);
+            }
+
+            if book_id as usize > MAX_BOOK_COUNT {
+                return Err(Error::InvalidBookId);
             }
 
             self.address_books[book_id as usize] = Some((contract_id, get_selector));
-            true
+            Ok(())
         }
 
         /// Allows owner of this contract to remove one of
         /// the addresses we forward to.
-        /// Returns true if this operation was successful.
         #[ink(message)]
-        pub fn remove_address_book(&mut self, book_id: u64) -> bool {
-            if self.env().caller() != self.owner || book_id as usize > MAX_BOOK_COUNT {
-                return false;
+        pub fn remove_address_book(&mut self, book_id: u64) -> Result<(), Error> {
+            if self.env().caller() != self.owner {
+                return Err(Error::PermissionDenied);
+            }
+
+            if book_id as usize > MAX_BOOK_COUNT {
+                return Err(Error::InvalidBookId);
             }
 
             self.address_books[book_id as usize] = None;
-            true
+            Ok(())
         }
 
         /// A function which queries memorized contracts
