@@ -3,7 +3,7 @@
 use ink_lang as ink;
 
 #[ink::contract]
-mod prime_arithmetic_mod {
+mod prime_arithmetic_lib_v2 {
     use ink_env::DefaultEnvironment;
     use scale::{Decode, Encode};
 
@@ -14,11 +14,11 @@ mod prime_arithmetic_mod {
     }
 
     #[ink(storage)]
-    pub struct PrimeArithmeticMod {
+    pub struct PrimeArithmeticLibV2 {
         admin: AccountId,
     }
 
-    impl PrimeArithmeticMod {
+    impl PrimeArithmeticLibV2 {
         #[ink(constructor)]
         pub fn new() -> Self {
             Self {
@@ -91,37 +91,37 @@ mod prime_arithmetic_mod {
 
         #[ink::test]
         fn add_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticLibV2::new();
             assert_eq!(calc.add(2, 4, 5), 1);
         }
 
         #[ink::test]
         fn multiply_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticLibV2::new();
             assert_eq!(calc.multiply(123, 211, 113), 76);
         }
 
         #[ink::test]
         fn power_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticLibV2::new();
             assert_eq!(calc.power(8, 100, 13), 1);
         }
 
         #[ink::test]
         fn invert_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticLibV2::new();
             assert_eq!(calc.invert(14, 131), Ok(103));
         }
 
         #[ink::test]
         fn invert_errors_if_divisible() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticLibV2::new();
             assert_eq!(calc.invert(14, 7), Err(Error::DivisibleByPrime));
         }
 
         #[ink::test]
         fn divide_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticLibV2::new();
             assert_eq!(calc.divide(123, 211, 113), Ok(37));
         }
     }
