@@ -62,7 +62,7 @@ mod forward_proxy {
                 .call_flags(
                     env::CallFlags::default()
                     .set_forward_input(true)
-                    .set_tail_call(false),
+                    .set_tail_call(true),
                     )
                 .fire() {
                     Err(_) => Err(Error::ContractCallError),

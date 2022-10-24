@@ -3,22 +3,15 @@
 use ink_lang as ink;
 
 #[ink::contract]
-mod prime_arithmetic_mod {
+mod prime_arithmetic_mod_simple {
     use ink_env::DefaultEnvironment;
-    use scale::{Decode, Encode};
-
-    #[derive(Eq, PartialEq, Debug, Decode, Encode)]
-    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
-    pub enum Error {
-        DivisibleByPrime,
-    }
 
     #[ink(storage)]
-    pub struct PrimeArithmeticMod {
+    pub struct PrimeArithmeticModSimple {
         admin: AccountId,
     }
 
-    impl PrimeArithmeticMod {
+    impl PrimeArithmeticModSimple {
         #[ink(constructor)]
         pub fn new() -> Self {
             Self {
@@ -32,7 +25,7 @@ mod prime_arithmetic_mod {
             (((summand_1 as u128) + (summand_2 as u128)) % (prime as u128)) as u64
         }
 
-        /// Multiplies two small numbers modulo a given prime
+        /// Multiplies two numbers modulo a given prime
         #[ink(message)]
         pub fn multiply(&self, factor_1: u64, factor_2: u64, prime: u64) -> u64 {
             (((factor_1 as u128) * (factor_2 as u128)) % (prime as u128)) as u64
@@ -54,27 +47,6 @@ mod prime_arithmetic_mod {
             result
         }
 
-        /// Inverts modulo a given prime
-        #[ink(message)]
-        pub fn invert(&self, number: u64, prime: u64) -> Result<u64, Error> {
-            if number % prime == 0 {
-                return Err(Error::DivisibleByPrime)
-            }
-
-            if prime == 2 {
-                Ok(1)
-            } else {
-                Ok(self.power(number, prime-2, prime))
-            }
-        }
-
-        /// Performs division modulo a given prime
-        #[ink(message)]
-        pub fn divide(&self, dividend: u64, divisor: u64, prime: u64) -> Result<u64, Error> {
-            let divisor_inv = self.invert(divisor, prime)?;
-            Ok(self.multiply(dividend, divisor_inv, prime))
-        }
-
         /// Allows admin to terminate instance of this contract
         #[ink(message)]
         pub fn terminate(&mut self) {
@@ -91,38 +63,20 @@ mod prime_arithmetic_mod {
 
         #[ink::test]
         fn add_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticModSimple::new();
             assert_eq!(calc.add(2, 4, 5), 1);
         }
 
         #[ink::test]
         fn multiply_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticModSimple::new();
             assert_eq!(calc.multiply(123, 211, 113), 76);
         }
 
         #[ink::test]
         fn power_works() {
-            let calc = PrimeArithmeticMod::new();
+            let calc = PrimeArithmeticModSimple::new();
             assert_eq!(calc.power(8, 100, 13), 1);
-        }
-
-        #[ink::test]
-        fn invert_works() {
-            let calc = PrimeArithmeticMod::new();
-            assert_eq!(calc.invert(14, 131), Ok(103));
-        }
-
-        #[ink::test]
-        fn invert_errors_if_divisible() {
-            let calc = PrimeArithmeticMod::new();
-            assert_eq!(calc.invert(14, 7), Err(Error::DivisibleByPrime));
-        }
-
-        #[ink::test]
-        fn divide_works() {
-            let calc = PrimeArithmeticMod::new();
-            assert_eq!(calc.divide(123, 211, 113), Ok(37));
         }
     }
 }
