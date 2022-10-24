@@ -3,15 +3,15 @@
 use ink_lang as ink;
 
 #[ink::contract]
-mod prime_arithmetic_mod_simple {
+mod prime_arithmetic_lib_v1 {
     use ink_env::DefaultEnvironment;
 
     #[ink(storage)]
-    pub struct PrimeArithmeticModSimple {
+    pub struct PrimeArithmeticLibV1 {
         admin: AccountId,
     }
 
-    impl PrimeArithmeticModSimple {
+    impl PrimeArithmeticLibV1 {
         #[ink(constructor)]
         pub fn new() -> Self {
             Self {
@@ -63,19 +63,19 @@ mod prime_arithmetic_mod_simple {
 
         #[ink::test]
         fn add_works() {
-            let calc = PrimeArithmeticModSimple::new();
+            let calc = PrimeArithmeticLibV1::new();
             assert_eq!(calc.add(2, 4, 5), 1);
         }
 
         #[ink::test]
         fn multiply_works() {
-            let calc = PrimeArithmeticModSimple::new();
+            let calc = PrimeArithmeticLibV1::new();
             assert_eq!(calc.multiply(123, 211, 113), 76);
         }
 
         #[ink::test]
         fn power_works() {
-            let calc = PrimeArithmeticModSimple::new();
+            let calc = PrimeArithmeticLibV1::new();
             assert_eq!(calc.power(8, 100, 13), 1);
         }
     }
