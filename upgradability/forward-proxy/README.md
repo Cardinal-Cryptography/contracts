@@ -4,5 +4,5 @@
 Forward proxy is a contract that has a catch-all method that forwards all non-matching calls to the earlier specified logic contract.
 
 ## Example contracts
-* `forward_proxy`: contract implementing the proxy itself
-* `prime_arithmetic_lib_v1` and `prime_arithmetic_lib_v2` example versions of stateless "library" contracts maintainet with `forward_proxy`
+* `forward_proxy`: contract implementing the proxy
+* `prime_arithmetic_lib_v1` and `prime_arithmetic_lib_v2` example versions of stateless "library" contracts maintained with `forward_proxy`
