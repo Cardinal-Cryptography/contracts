@@ -1,4 +1,4 @@
-# `prime_arithmetic_lib_v1` contracts
+# `prime_arithmetic_lib_v1` contract
 This contract is a part of an example showcasing smart contract upgradability using forward proxy pattern.
 For more info check out `forward_proxy` example.
 
