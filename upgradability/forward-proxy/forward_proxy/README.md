@@ -5,7 +5,7 @@ Contract implementing a simple forward-call proxy.
 Forward proxy is a contract which stores address of some other contract (actually deployed on chain, not just it's code hash) and provides a catch-all forwarding method.
 It is a method which will redirect any calls that do not match proxy's messages' selectors to the stored address.
 
-Such a proxy might, for example, be used to provide an interface to a stateless library that might need to be later upgraded.
+Such a proxy might, for example, be used to provide an interface to a stateless library that will need future upgrades.
 
 Note: as all logic is performed in the context of the logic contract, the storage won't be persistent between upgrades.
 
