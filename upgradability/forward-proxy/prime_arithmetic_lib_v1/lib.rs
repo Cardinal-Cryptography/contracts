@@ -5,6 +5,13 @@ use ink_lang as ink;
 #[ink::contract]
 mod prime_arithmetic_lib_v1 {
     use ink_env::DefaultEnvironment;
+    use scale::{Decode, Encode};
+
+    #[derive(Eq, PartialEq, Debug, Decode, Encode)]
+    #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+    pub enum Error {
+        PermissionDenied,
+    }
 
     #[ink(storage)]
     pub struct PrimeArithmeticLibV1 {
@@ -49,9 +56,12 @@ mod prime_arithmetic_lib_v1 {
 
         /// Allows admin to terminate instance of this contract
         #[ink(message)]
-        pub fn terminate(&mut self) {
+        pub fn terminate(&mut self) -> Result<(), Error> {
             if self.env().caller() == self.admin {
                 ink_env::terminate_contract::<DefaultEnvironment>(self.admin);
+                // We do not return after calling terminate_contract
+            } else {
+                Err(Error::PermissionDenied)
             }
         }
     }

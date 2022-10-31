@@ -11,6 +11,7 @@ mod prime_arithmetic_lib_v2 {
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
         DivisibleByPrime,
+        PermissionDenied,
     }
 
     #[ink(storage)]
@@ -77,9 +78,12 @@ mod prime_arithmetic_lib_v2 {
 
         /// Allows admin to terminate instance of this contract
         #[ink(message)]
-        pub fn terminate(&mut self) {
+        pub fn terminate(&mut self) -> Result<(), Error> {
             if self.env().caller() == self.admin {
                 ink_env::terminate_contract::<DefaultEnvironment>(self.admin);
+                // We do not return after calling terminate_contract
+            } else {
+                Err(Error::PermissionDenied)
             }
         }
     }
