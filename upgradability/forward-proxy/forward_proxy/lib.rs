@@ -4,9 +4,9 @@ use ink_lang as ink;
 
 #[ink::contract]
 mod forward_proxy {
-    use scale::{Decode, Encode};
-    use ink_env::call::Call;
     use ink_env as env;
+    use ink_env::call::Call;
+    use scale::{Decode, Encode};
 
     #[derive(Eq, PartialEq, Debug, Decode, Encode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
@@ -23,8 +23,11 @@ mod forward_proxy {
 
     impl ForwardProxy {
         #[ink(constructor)]
-        pub fn new(logic_contract: AccountId, admin: AccountId) -> Self {
-            Self { logic_contract, admin }
+        pub fn new(logic_contract: AccountId) -> Self {
+            Self {
+                logic_contract,
+                admin: Self::env().caller(),
+            }
         }
 
         /// Allows admin to transfer his privilages to another account
@@ -40,7 +43,10 @@ mod forward_proxy {
 
         /// Allows admin to change address of the logic contract
         #[ink(message)]
-        pub fn change_logic_contract(&mut self, new_logic_contract: AccountId) -> Result<(), Error> {
+        pub fn change_logic_contract(
+            &mut self,
+            new_logic_contract: AccountId,
+        ) -> Result<(), Error> {
             if self.env().caller() != self.admin {
                 Err(Error::PermissionDenied)
             } else {
@@ -56,41 +62,45 @@ mod forward_proxy {
             match env::call::build_call::<env::DefaultEnvironment>()
                 .call_type(
                     Call::new()
-                    .callee(self.logic_contract)
-                    .transferred_value(self.env().transferred_value()),
-                    )
+                        .callee(self.logic_contract)
+                        .transferred_value(self.env().transferred_value()),
+                )
                 .call_flags(
                     env::CallFlags::default()
-                    .set_forward_input(true)
-                    .set_tail_call(true),
-                    )
-                .fire() {
-                    Err(_) => Err(Error::ContractCallError),
-                    _ => Ok(()),
-                }
+                        .set_forward_input(true)
+                        .set_tail_call(true),
+                )
+                .fire()
+            {
+                Err(_) => Err(Error::ContractCallError),
+                _ => Ok(()),
+            }
         }
     }
 
     #[cfg(test)]
     mod tests {
         use super::*;
-        use ink_lang as ink;
-        use ink_env::test::{set_caller, default_accounts};
+        use ink_env::test::{default_accounts, set_caller};
         use ink_env::DefaultEnvironment;
+        use ink_lang as ink;
 
         #[ink::test]
         fn non_admin_cannot_change_admin() {
             let accounts = default_accounts::<DefaultEnvironment>();
-            let mut forward_proxy = ForwardProxy::new(accounts.frank, accounts.alice);
+            let mut forward_proxy = ForwardProxy::new(accounts.frank);
 
             set_caller::<DefaultEnvironment>(accounts.bob);
-            assert!(matches!(forward_proxy.change_admin(accounts.bob), Err(Error::PermissionDenied)));
+            assert!(matches!(
+                forward_proxy.change_admin(accounts.bob),
+                Err(Error::PermissionDenied)
+            ));
         }
 
         #[ink::test]
         fn admin_can_change_admin() {
             let accounts = default_accounts::<DefaultEnvironment>();
-            let mut forward_proxy = ForwardProxy::new(accounts.frank, accounts.alice);
+            let mut forward_proxy = ForwardProxy::new(accounts.frank);
 
             set_caller::<DefaultEnvironment>(accounts.alice);
             assert!(forward_proxy.change_admin(accounts.bob).is_ok());
@@ -99,16 +109,19 @@ mod forward_proxy {
         #[ink::test]
         fn non_admins_cannot_change_logic_contract() {
             let accounts = default_accounts::<DefaultEnvironment>();
-            let mut forward_proxy = ForwardProxy::new(accounts.frank, accounts.alice);
+            let mut forward_proxy = ForwardProxy::new(accounts.frank);
 
             set_caller::<DefaultEnvironment>(accounts.bob);
-            assert!(matches!(forward_proxy.change_logic_contract(accounts.eve), Err(Error::PermissionDenied)));
+            assert!(matches!(
+                forward_proxy.change_logic_contract(accounts.eve),
+                Err(Error::PermissionDenied)
+            ));
         }
 
         #[ink::test]
         fn admins_can_change_logic_contract() {
             let accounts = default_accounts::<DefaultEnvironment>();
-            let mut forward_proxy = ForwardProxy::new(accounts.frank, accounts.alice);
+            let mut forward_proxy = ForwardProxy::new(accounts.frank);
 
             set_caller::<DefaultEnvironment>(accounts.alice);
             assert!(forward_proxy.change_logic_contract(accounts.eve).is_ok());
