@@ -6,13 +6,14 @@ use ink_lang as ink;
 mod forward_proxy {
     use ink_env as env;
     use ink_env::call::Call;
+    use ink_prelude::{string::String, format};
     use scale::{Decode, Encode};
 
     #[derive(Eq, PartialEq, Debug, Decode, Encode)]
     #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
     pub enum Error {
         PermissionDenied,
-        ContractCallError,
+        ContractCallError(String),
     }
 
     #[ink(storage)]
@@ -72,7 +73,7 @@ mod forward_proxy {
                 )
                 .fire()
             {
-                Err(_) => Err(Error::ContractCallError),
+                Err(cause) => Err(Error::ContractCallError(format!("{:?}", cause))),
                 _ => Ok(()),
             }
         }
