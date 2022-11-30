@@ -6,7 +6,7 @@ use ink_lang as ink;
 mod forward_proxy {
     use ink_env as env;
     use ink_env::call::Call;
-    use ink_prelude::{string::String, format};
+    use ink_prelude::{format, string::String};
     use scale::{Decode, Encode};
 
     #[derive(Eq, PartialEq, Debug, Decode, Encode)]
@@ -60,7 +60,7 @@ mod forward_proxy {
         /// do not match other methods of this proxy
         #[ink(message, payable, selector = _)]
         pub fn _catch_all_forward(&self) -> Result<(), Error> {
-            match env::call::build_call::<env::DefaultEnvironment>()
+            env::call::build_call::<env::DefaultEnvironment>()
                 .call_type(
                     Call::new()
                         .callee(self.logic_contract)
@@ -72,10 +72,7 @@ mod forward_proxy {
                         .set_tail_call(true),
                 )
                 .fire()
-            {
-                Err(cause) => Err(Error::ContractCallError(format!("{:?}", cause))),
-                _ => Ok(()),
-            }
+                .map_err(|cause| Error::ContractCallError(format!("{:?}", cause)))
         }
     }
 
