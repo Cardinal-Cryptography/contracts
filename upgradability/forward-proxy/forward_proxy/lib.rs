@@ -56,7 +56,7 @@ mod forward_proxy {
             }
         }
 
-        /// A catch-all method which forwards calls which selectors
+        /// A catch-all method which forwards calls who's selectors
         /// do not match other methods of that proxy
         #[ink(message, payable, selector = _)]
         pub fn _catch_all_forward(&self) -> Result<(), Error> {
